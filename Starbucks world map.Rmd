@@ -1,0 +1,120 @@
+---
+title: "Starbucks world map"
+author: "Danish Khan"
+date: '2017-02-24'
+output: html_document
+---
+
+``` {r,echo=FALSE}
+install.packages('leaflet',repos="http://cran.us.r-project.org",quiet = TRUE)
+library(leaflet,warn.conflicts = FALSE)
+library(dplyr,warn.conflicts = FALSE)
+library(htmltools,warn.conflicts = FALSE)
+library(htmlwidgets,warn.conflicts = FALSE)
+```
+
+```{r Downloading and cleaning, echo=FALSE}
+raw = read.csv('directory.csv')
+raw = na.omit(raw)
+Country.Name = as.vector(raw$Country)
+Country.Name = replace(Country.Name, Country.Name=='AD','Andorra')
+Country.Name = replace(Country.Name, Country.Name=='AE','UAE')
+Country.Name = replace(Country.Name, Country.Name=='AR','Argentina')
+Country.Name = replace(Country.Name, Country.Name=='AT','Austria')
+Country.Name = replace(Country.Name, Country.Name=='AU','Australia')
+Country.Name = replace(Country.Name, Country.Name=='AW','Aruba')
+Country.Name = replace(Country.Name, Country.Name=='AZ','Azerbaijan')
+Country.Name = replace(Country.Name, Country.Name=='BE','Belgium')
+Country.Name = replace(Country.Name, Country.Name=='BG','Bulgaria')
+Country.Name = replace(Country.Name, Country.Name=='BH','Bahrain')
+Country.Name = replace(Country.Name, Country.Name=='BN','Brunei')
+Country.Name = replace(Country.Name, Country.Name=='BO','Bolivia')
+Country.Name = replace(Country.Name, Country.Name=='BR','Brazil')
+Country.Name = replace(Country.Name, Country.Name=='BS','Bahamas')
+Country.Name = replace(Country.Name, Country.Name=='CA','Canada')
+Country.Name = replace(Country.Name, Country.Name=='CH','Switzerland')
+Country.Name = replace(Country.Name, Country.Name=='CL','Chile')
+Country.Name = replace(Country.Name, Country.Name=='CN','China')
+Country.Name = replace(Country.Name, Country.Name=='CO','Colombia')
+Country.Name = replace(Country.Name, Country.Name=='CR','Costa Rica')
+Country.Name = replace(Country.Name, Country.Name=='CW','Curacao')
+Country.Name = replace(Country.Name, Country.Name=='CY','Cyprus')
+Country.Name = replace(Country.Name, Country.Name=='CZ','Czech Republic')
+Country.Name = replace(Country.Name, Country.Name=='DE','Germany')
+Country.Name = replace(Country.Name, Country.Name=='DK','Denmark')
+Country.Name = replace(Country.Name, Country.Name=='EG','Egypt')
+Country.Name = replace(Country.Name, Country.Name=='ES','Spain')
+Country.Name = replace(Country.Name, Country.Name=='FI','Finland')
+Country.Name = replace(Country.Name, Country.Name=='FR','France')
+Country.Name = replace(Country.Name, Country.Name=='GB','UK')
+Country.Name = replace(Country.Name, Country.Name=='GR','Greece')
+Country.Name = replace(Country.Name, Country.Name=='GT','Guatemala')
+Country.Name = replace(Country.Name, Country.Name=='HU','Hungary')
+Country.Name = replace(Country.Name, Country.Name=='ID','Indonesia')
+Country.Name = replace(Country.Name, Country.Name=='IE','Ireland')
+Country.Name = replace(Country.Name, Country.Name=='IN','India')
+Country.Name = replace(Country.Name, Country.Name=='JO','Jordan')
+Country.Name = replace(Country.Name, Country.Name=='JP','Japan')
+Country.Name = replace(Country.Name, Country.Name=='KH','Cambodia')
+Country.Name = replace(Country.Name, Country.Name=='KR','Korea')
+Country.Name = replace(Country.Name, Country.Name=='KW','Kuwait')
+Country.Name = replace(Country.Name, Country.Name=='KZ','Kazakhstan')
+Country.Name = replace(Country.Name, Country.Name=='LB','Lebanon')
+Country.Name = replace(Country.Name, Country.Name=='LU','Luxembourg')
+Country.Name = replace(Country.Name, Country.Name=='MA','Morocco')
+Country.Name = replace(Country.Name, Country.Name=='MC','Monaco')
+Country.Name = replace(Country.Name, Country.Name=='MX','Mexico')
+Country.Name = replace(Country.Name, Country.Name=='MY','Malaysia')
+Country.Name = replace(Country.Name, Country.Name=='NL','Netherlands')
+Country.Name = replace(Country.Name, Country.Name=='NO','Norway')
+Country.Name = replace(Country.Name, Country.Name=='NZ','New Zealand')
+Country.Name = replace(Country.Name, Country.Name=='OM','Oman')
+Country.Name = replace(Country.Name, Country.Name=='PA','Panama')
+Country.Name = replace(Country.Name, Country.Name=='PE','Peru')
+Country.Name = replace(Country.Name, Country.Name=='PH','Philippines')
+Country.Name = replace(Country.Name, Country.Name=='PL','Poland')
+Country.Name = replace(Country.Name, Country.Name=='PR','Puerto Rico')
+Country.Name = replace(Country.Name, Country.Name=='PT','Portugal')
+Country.Name = replace(Country.Name, Country.Name=='QA','Qatar')
+Country.Name = replace(Country.Name, Country.Name=='RO','Romania')
+Country.Name = replace(Country.Name, Country.Name=='RU','Russia')
+Country.Name = replace(Country.Name, Country.Name=='SA','Saudi Arabia')
+Country.Name = replace(Country.Name, Country.Name=='SE','Sweden')
+Country.Name = replace(Country.Name, Country.Name=='SG','Singapore')
+Country.Name = replace(Country.Name, Country.Name=='SK','Slovakia')
+Country.Name = replace(Country.Name, Country.Name=='SV','El Salvador')
+Country.Name = replace(Country.Name, Country.Name=='TH','Thailand')
+Country.Name = replace(Country.Name, Country.Name=='TR','Turkey')
+Country.Name = replace(Country.Name, Country.Name=='TT','Trinidad & Tobago')
+Country.Name = replace(Country.Name, Country.Name=='TW','Taiwan')
+Country.Name = replace(Country.Name, Country.Name=='US','USA')
+Country.Name = replace(Country.Name, Country.Name=='VN','Vietnam')
+Country.Name = replace(Country.Name, Country.Name=='ZA','South Africa')
+raw = cbind(raw,Country.Name)
+
+#head(Country.Name)
+```
+
+
+```{r Leaflet,echo=FALSE}
+sbIcon = makeIcon(
+  iconUrl = 'Starbucks_Coffee_Logo.svg.png',
+  iconWidth = 31*215/230,
+  iconHeight = 31,
+  iconAnchorX = 31*215/230/2,
+  iconAnchorY = 16
+)
+address = paste("<b>",raw$Street.Address,"</b>","<br />",raw$City,","," ",raw$State.Province," ", raw$Country.Name, sep="")
+
+coord = data.frame(lat = raw$Latitude,lng = raw$Longitude)
+m = coord %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(clusterOptions = markerClusterOptions(),icon = sbIcon,popup=address) %>%
+  addEasyButton(easyButton(
+    icon="fa-globe", title="Zoom to Level 1",
+    onClick=JS("function(btn, map){ map.setZoom(1); }")))
+m
+```
+
+The Starbucks dataset is downloaded from www.kaggle.com
