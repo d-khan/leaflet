@@ -98,7 +98,7 @@ raw = cbind(raw,Country.Name)
 
 ```{r Leaflet,echo=FALSE}
 sbIcon = makeIcon(
-  iconUrl = 'Starbucks_Coffee_Logo.svg.png',
+  iconUrl = 'https://raw.githubusercontent.com/dkhan1010/leaflet/master/Starbucks_Coffee_Logo.svg.png',
   iconWidth = 31*215/230,
   iconHeight = 31,
   iconAnchorX = 31*215/230/2,
