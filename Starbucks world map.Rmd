@@ -11,6 +11,7 @@ library(leaflet,warn.conflicts = FALSE)
 library(dplyr,warn.conflicts = FALSE)
 library(htmltools,warn.conflicts = FALSE)
 library(htmlwidgets,warn.conflicts = FALSE)
+library(plotly,warn.conflicts = FALSE)
 ```
 
 ```{r Downloading and cleaning, echo=FALSE}
@@ -116,5 +117,57 @@ m = coord %>%
     onClick=JS("function(btn, map){ map.setZoom(1); }")))
 m
 ```
+
+
+```{r worldlocations,echo=FALSE,warning=FALSE}
+
+world_locations = table(raw$Country.Name)
+world_locations = as.data.frame(world_locations)
+colnames(world_locations) = c('Country','Freq')
+world_locations = mutate(world_locations, Numbers_in_log = log10(Freq))
+
+# Plot_ly attributes
+m = list(
+  l = 50,
+  r = 50,
+  b = 100,
+  t = 50
+)
+
+f1 = list(
+  family = "Arial, sans-serif",
+  size = 9,
+  color = 'black')
+
+f2 = list(
+  family = "Arial, sans-serif",
+  size = 12,
+  color = 'black')
+
+f3 = list(
+  family = "Arial, sans-serif",
+  size = 16,
+  color = 'black')
+
+x1 = list(
+  title = '',
+  tickfont = f1,
+  showline=TRUE,
+  showgrid=TRUE
+)
+
+y1 = list(
+  title='<b>Number of Starbucks locations (Log<sub>10</sub>)</b>',
+  titlefont = f2,
+  showgrid=TRUE,
+  range = c(0,4.5),
+  showline=TRUE
+)
+
+plot_ly(world_locations,x = ~Country, y = ~Numbers_in_log, type = 'bar') %>%
+  layout(title = '<b>Starbucks location worldwide</b>',titlefont = f3, autosize=F, width=900, height=500, margin = m,
+         xaxis = x1, yaxis = y1)
+```
+
 
 The Starbucks dataset is downloaded from www.kaggle.com
